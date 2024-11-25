@@ -32,15 +32,26 @@ export const Timer: React.FC<TimerProps> = ({
       .padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  const remainingTime = Math.max(
-    0,
-    Math.ceil(estimatedTime * (1 - completionPercentage / 100))
-  );
+  const calculateRemainingTime = (): number => {
+    if (!startTime || completionPercentage === 0) return estimatedTime;
+    if (completionPercentage === 100) return 0;
+
+    // Calculate rate of completion (percentage per second)
+    const rate = completionPercentage / elapsed;
+    
+    // Calculate remaining percentage
+    const remainingPercentage = 100 - completionPercentage;
+    
+    // Calculate remaining time based on current rate
+    const remainingTime = Math.ceil(remainingPercentage / rate);
+    
+    return remainingTime;
+  };
 
   return (
     <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
       <div>Time Elapsed: {formatTime(elapsed)}</div>
-      <div>Estimated Remaining: {formatTime(remainingTime)}</div>
+      <div>Estimated Remaining: {formatTime(calculateRemainingTime())}</div>
     </div>
   );
 };
