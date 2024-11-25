@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Upload } from 'lucide-react';
+import { Upload, ArrowLeft } from 'lucide-react';
 import { ThemeToggle } from './components/ThemeToggle';
 import { ProgressBar } from './components/ProgressBar';
 import { Timer } from './components/Timer';
@@ -58,7 +58,6 @@ function App() {
     e.preventDefault();
     e.stopPropagation();
     
-    // Only set isDragging to false if we're leaving the dropzone itself
     if (e.currentTarget === dropZoneRef.current) {
       setIsDragging(false);
     }
@@ -92,6 +91,15 @@ function App() {
       estimatedTime: tasks.length * 900,
     });
     setView('tasks');
+  };
+
+  const handleBack = () => {
+    setView('input');
+    setTaskState({
+      tasks: [],
+      startTime: null,
+      estimatedTime: 3600,
+    });
   };
 
   const calculateProgress = useCallback((tasks: Task[]): number => {
@@ -223,9 +231,19 @@ function App() {
             </div>
           ) : (
             <div className="space-y-6">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Progress
-              </h1>
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={handleBack}
+                  className="flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  Back
+                </button>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  Progress
+                </h1>
+                <div className="w-20" /> {/* Spacer for alignment */}
+              </div>
               
               <ProgressBar
                 progress={calculateProgress(taskState.tasks)}
